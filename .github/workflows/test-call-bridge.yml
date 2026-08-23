@@ -1,0 +1,6 @@
+name: Test Call Bridge
+on:
+  workflow_dispatch:
+jobs:
+  call:
+    uses: ./.github/workflows/bridge.yml
