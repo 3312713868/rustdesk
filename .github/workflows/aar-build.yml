@@ -152,22 +152,21 @@ jobs:
         shell: bash
         env:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          ANDROID_NDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           export PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
           sed -i "s/org.gradle.jvmargs=-Xmx1024M/org.gradle.jvmargs=-Xmx2g/g" ./flutter/android/gradle.properties
-          cd flutter
-          flutter build aar --release --target-platform android-arm64
-          cd ..
+          cd flutter/android
+          ./gradlew :app:assembleRelease --no-daemon
+          cd ../..
           echo "=== AAR output ==="
-          find flutter/build/host/outputs -type f | head -50
-          echo "=== repo structure ==="
-          find flutter/build/host/outputs/repo -type f | head -50
+          find flutter/android/app/build/outputs/aar -type f 2>/dev/null | head -20
 
       - name: Upload AAR artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: rustdesk-aar-arm64
           path: |
-            flutter/build/host/outputs/aar
-            flutter/build/host/outputs/repo
+            flutter/android/app/build/outputs/aar
           if-no-files-found: error
