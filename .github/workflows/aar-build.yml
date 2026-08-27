@@ -68,6 +68,8 @@ jobs:
         with:
           name: bridge-artifact
           path: ./
+          run-id: 32642322277
+          github-token: ${{ github.token }}
 
       - name: Install flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
