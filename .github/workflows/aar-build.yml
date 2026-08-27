@@ -1,6 +1,6 @@
 name: Build RustDesk AAR (for embedding)
 
-on:
+"on":
   workflow_dispatch:
   push:
     branches: [master]
@@ -132,15 +132,10 @@ jobs:
           EOF
           # remove LAUNCHER intent-filter from MainActivity (embedding app owns launcher)
           python3 - <<'EOF'
+          import re
           path = 'src/main/AndroidManifest.xml'
           s = open(path).read()
-          s = s.replace('''            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-''', '')
+          s = re.sub(r'\s*<intent-filter>\s*<action android:name="android.intent.action.MAIN"[^>]*/>.*?</intent-filter>\s*\n?', '', s, flags=re.S)
           open(path, 'w').write(s)
           print("manifest launcher removed")
           EOF
